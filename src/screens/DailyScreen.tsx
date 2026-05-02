@@ -43,8 +43,9 @@ export default function DailyScreen() {
         profile.baziData.city,
       );
       setGuidance(g);
-    } catch {
-      setError("Unable to load daily guidance");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unable to load daily guidance";
+      setError(message);
     } finally {
       setLoading(false);
     }
