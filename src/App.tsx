@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
+import * as Updates from "expo-updates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HomeScreen from "./screens/HomeScreen";
 import Navigation from "./navigation";
@@ -13,6 +14,12 @@ export default function App() {
     AsyncStorage.getItem(WELCOME_KEY).then((val) => {
       setShowWelcome(val !== "true");
     });
+    Updates.checkForUpdateAsync()
+      .then((u) => {
+        if (u.isAvailable) return Updates.fetchUpdateAsync();
+      })
+      .then(() => Updates.reloadAsync())
+      .catch(() => {});
   }, []);
 
   const handleEnter = async () => {
