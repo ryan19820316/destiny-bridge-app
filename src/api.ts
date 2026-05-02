@@ -91,5 +91,8 @@ export async function getDailyGuidance(
     const err = await res.json().catch(() => ({ error: "Unknown error" }));
     throw new Error(err.error || `HTTP ${res.status}`);
   }
-  return res.json();
+  const json = await res.json();
+  if (json.dailyGuidance) return json.dailyGuidance;
+  if (json.error) throw new Error(json.error);
+  throw new Error("Daily guidance not available");
 }
