@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { MainTabParamList } from "@/navigation/types";
 import type { DailyGuidance } from "@/types";
@@ -15,6 +16,8 @@ import { getProfile } from "@/store/profile";
 import { getDailyGuidance } from "@/api";
 
 type TabNav = BottomTabNavigationProp<MainTabParamList>;
+
+const CACHE_KEY = "daily_guidance_cache";
 
 export default function DailyScreen() {
   const navigation = useNavigation<TabNav>();
@@ -31,6 +34,21 @@ export default function DailyScreen() {
       return;
     }
     setHasProfile(true);
+
+    const today = new Date().toISOString().split("T")[0];
+
+    // Use cached result if it's from today
+    try {
+      const cachedRaw = await AsyncStorage.getItem(CACHE_KEY);
+      if (cachedRaw) {
+        const cached = JSON.parse(cachedRaw);
+        if (cached.date === today) {
+          setGuidance(cached);
+          return;
+        }
+      }
+    } catch {}
+
     setLoading(true);
     setError(null);
     try {
@@ -43,6 +61,7 @@ export default function DailyScreen() {
         profile.baziData.city,
       );
       setGuidance(g);
+      AsyncStorage.setItem(CACHE_KEY, JSON.stringify(g)).catch(() => {});
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unable to load daily guidance";
       setError(message);
