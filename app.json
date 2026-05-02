@@ -27,6 +27,18 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "91a5b6e6-99b4-4a82-a88d-3a8f333f0b1e"
+      }
+    },
+    "owner": "ryanshiyu",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/91a5b6e6-99b4-4a82-a88d-3a8f333f0b1e"
     }
   }
 }
